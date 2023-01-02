@@ -79,12 +79,12 @@
                      HorizontalContentAlignment="Center"
                      VerticalContentAlignment="Center"
                      TextChanged="EquationEntry_TextChanged" />
-
+				<!-- Closing Tag: Equation Entry Textbox StackPanel-->
 			</StackPanel>
 
-			<!-- The Error Message (only visible if there are errors TODO:  This doesn't work -->
+			<!-- The Error Messages (only visible if there are errors TODO:  This doesn't work -->
 			<StackPanel Grid.Row="1" Orientation="Vertical" >
-				<TextBlock Text="Error List" Foreground="DarkGray" FontSize="15"
+				<TextBlock Text="Error List" Foreground="DarkGray" FontSize="20"
 						   Margin="0,0,0,1" HorizontalAlignment="Center"/>
 				
 				<!-- Underline under the Header -->
@@ -93,7 +93,7 @@
 
 				<!-- Error Message for Invalid Characters in the Textbox -->
 				<TextBlock HorizontalAlignment="Center" Foreground ="Red"
-                           Text="{Binding InvalidCharErrorMessage}" FontSize="19"
+                           Text="{Binding InvalidCharErrorMessage}" FontSize="20"
                            IsVisible="{Binding InvalidCharFound}" Margin="0,0,0,10"/>
 
 				<!-- Error Message for Opening/Closing Brackets not matching up -->
@@ -104,11 +104,11 @@
 						   FontSize="17"/>
 
 				<!-- Error Message for trying to divide by zero -->
-				<TextBlock HorizontalAlignment="Center" Foreground ="LightGray"
+				<TextBlock HorizontalAlignment="Center" Foreground ="Violet"
                            Text="{Binding DivideByZeroErrorMessage}"
                            IsVisible="{Binding DivideByZeroFound}"
-						   FontSize="15"/>
-
+						   FontSize="19"/>
+				<!-- Closing Tag: The Error Messages StackPanel -->
 			</StackPanel>
 
 			<!-- The Result of the equation -->
@@ -119,7 +119,8 @@
 
 				<!-- The Calculated Result of the Equation -->
 				<TextBlock Text="{Binding Result}" FontSize="25"/>
-
+				
+				<!-- Closing Tag: Result of the equation StackPanel -->
 			</StackPanel>
 
 			<!-- Solve Equation Button -->
