@@ -1,0 +1,126 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:EquationResolver.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="EquationResolver.Views.MainView"
+             
+             Background="#171C2C"
+			 Height="450" Width="800">
+  <Design.DataContext>
+    <viewModels:MainViewModel />
+  </Design.DataContext>
+
+	<!--xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+        xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Custom;assembly=Avalonia.Xaml.Interactions"-->
+
+	<UserControl.Resources>
+		<!--<valueConverters:BoolToVisibilityInverseConverter x:Key="BoolToVisibilityInverseConverter"></valueConverters:BoolToVisibilityInverseConverter>
+        <valueConverters:BoolToVisibilityConverter x:Key="BoolToVisibility"></valueConverters:BoolToVisibilityConverter>-->
+	</UserControl.Resources>
+
+	<!-- Main Grid -->
+	<Grid >
+
+
+
+		<Grid.ColumnDefinitions>
+			<!-- The ListView of the calculations -->
+			<ColumnDefinition Width="*" />
+			<!-- The Equation Entry panel -->
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+
+		<!-- Left half of the view showing the Calculations in order of them happening -->
+		<Grid Grid.Column="0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+
+			<!-- The Column Header-->
+			<TextBlock Grid.Row="0" HorizontalAlignment="Center"
+                   Margin="0,5,0,0" FontSize="20"
+                   Text="Calculations in Order of Operation" />
+
+			<!-- The Collection of Equations in Order of Operation -->
+			<ListBox Grid.Row="1" Margin="20,20,20,20"
+                  Items="{Binding Calculations}"
+                  FontSize="15"/>
+		</Grid>
+
+
+		<!-- The Equation Entry and Solution Grid -->
+		<Grid Grid.Column="1" Grid.ColumnSpan="2">
+			<Grid.RowDefinitions>
+				<!-- Row 0: Equation Entry Textbox -->
+				<RowDefinition Height="*" />
+				<!-- Row 1: The Error Message label -->
+				<RowDefinition Height="40" />
+				<!-- Row 2: The Result of the Equation -->
+				<RowDefinition Height="*" />
+				<!-- Row 3: Button: Solve Equation Entered -->
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+
+			
+
+			<!-- Equation Entry Textbox-->
+			<StackPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+
+				<!-- The Header -->
+				<TextBlock Text="Enter your equation:" FontSize="20" Margin="0,0,0,20"/>
+
+				<!-- The Equation Entry Textbox -->
+				<TextBox x:Name="EquationEntry" FontSize="20" Background="Transparent"
+                     Text="{Binding OriginalString, Mode=TwoWay}"
+                     HorizontalContentAlignment="Center"
+                     VerticalContentAlignment="Center"
+                     TextChanged="EquationEntry_TextChanged"
+                     />
+
+			</StackPanel>
+
+			<!-- The Error Message (only visible if there are errors TODO:  This doesn't work -->
+			<StackPanel Grid.Row="1" Orientation="Vertical" >
+
+				<!-- Error Message for Invalid Characters in the Textbox -->
+				<TextBlock HorizontalAlignment="Center"
+                           Text="{Binding InvalidCharErrorMessage}"
+                           IsVisible="{Binding InvalidCharFound}"/>
+
+				<!-- Error Message for Opening/Closing Brackets not matching up -->
+				<TextBlock HorizontalAlignment="Center"
+                           Text="{Binding MismatchedBracketsErrorMessage}"
+                           IsVisible="{Binding MismatchedBracketsFound}"/>
+				
+				<!-- Error Message for Opening/Closing Brackets not matching up -->
+				<TextBlock HorizontalAlignment="Center"
+                           Text="{Binding DivideByZeroErrorMessage}"
+                           IsVisible="{Binding DivideByZeroFound}"/>
+
+			</StackPanel>
+
+			<!-- The Result of the equation -->
+			<StackPanel Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+
+				<!-- The Header for the result -->
+				<TextBlock Text="Result :   " FontSize="20"/>
+
+				<!-- The Calculated Result of the Equation -->
+				<TextBlock Text="{Binding Result}" FontSize="20"/>
+
+			</StackPanel>
+
+			<!-- Solve Equation Button -->
+			<Button Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center"
+                FontSize="20" Margin="0,0,0,20"
+                Command="{Binding SolveEquationButtonPressedCommand}" Content="SolveTextboxEquation" />
+
+			<!-- Closing Tag: The Equation Entry and Solution Grid -->
+		</Grid>
+		<!-- Closing Tag: The Main Grid -->
+	</Grid>
+
+</UserControl>
