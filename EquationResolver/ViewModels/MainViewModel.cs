@@ -315,6 +315,7 @@ namespace EquationResolver.ViewModels
                 return string.Empty;
             }
         }
+
         #endregion EndRegion: Private helper methods
 
 
@@ -370,6 +371,7 @@ namespace EquationResolver.ViewModels
             // Change the Equation Result back to a double and update the view with the result of the entire equation
             else Result = Convert.ToDouble(equationResult);
         }
+
         #endregion EndRegion: Command Methods
 
 
@@ -687,82 +689,5 @@ namespace EquationResolver.ViewModels
 
         #endregion EndRegion:  Private methods to Solve the Equation 
 
-        ///// <summary>
-        /////      When an operator is found, find the number before the operator
-        ///// </summary>
-        ///// <param name="stringRecieved">The equation passed in</param>
-        ///// <param name="index">The index point of the operator</param>
-        ///// <returns></returns>
-        //private string FindNumberBeforeOperatorAsString(string stringRecieved, int index)
-        //{
-        //    // The number before the operator
-        //    var firstHalfOfString = stringRecieved.Substring(0, index);
-
-        //    // Set a counter equal to the index of the operator
-        //    var i = index;
-
-        //    // Iterate backwards through the passed in string
-        //    foreach (var c in stringRecieved.Substring(0, index).Reverse())
-        //    {
-        //        // If a character is not a number then...
-        //        if (!IsANumber(c))
-        //        {
-        //            // Grab the number before the operand as a string
-        //            var numberBeforeOperand = stringRecieved.Substring(i, index - i + 1);
-
-        //            // Return the value
-        //            return numberBeforeOperand;
-        //        }
-        //        // If the character is a number then decrement the counter and look at the character 
-        //        //      before this one
-        //        else i--;
-        //    }
-
-        //    var result = stringRecieved.Substring(0, i);
-        //    // TODO:  ONe of these is correct... figure it out
-
-        //    //var result = stringRecieved.Substring(0, index);
-
-        //    // Return the number as a string that is before the operand
-        //    return result;
-
-        //}
-
-        /// <summary>
-        ///      When an operator is found, find the number after the operator
-        /// </summary>
-        /// <param name="stringRecieved">The equation passed in</param>
-        /// <param name="index">The index point of the operator</param>
-        /// <returns></returns>
-        //private string FindNumberAfterOperatorAsString(string stringRecieved, int index)
-        //{
-        //    // Start off by creating a secondHalfOfString that is the entire rest of the string received
-        //    var secondHalfOfString = stringRecieved.Substring(index);
-
-        //    // Set the counter at the point where the operator was found
-        //    var i = index;
-
-        //    // Iterate through all the characters that were found after the operator
-        //    foreach (var c in secondHalfOfString)
-        //    {
-        //        // If the character is not a number...
-        //        if (!IsANumber(c))
-        //        {
-        //            // Grab the number after the operator
-        //            var numberAfterTheOperator = stringRecieved.Substring(i, index - i + 1);
-
-        //            // Return the Number after the Operator
-        //            return numberAfterTheOperator;
-        //        }
-        //        // If we haven't found a character that isn't a number... decrement the counter
-        //        i--;
-        //    }
-
-        //    // Set the result for the Second Half of String to the found number
-        //    var result = secondHalfOfString;
-
-        //    // Return the result
-        //    return result;
-        //}
     }
 }

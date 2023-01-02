@@ -93,7 +93,7 @@
 
 				<!-- Error Message for Invalid Characters in the Textbox -->
 				<TextBlock HorizontalAlignment="Center" Foreground ="Red"
-                           Text="{Binding InvalidCharErrorMessage}" FontSize="20"
+                           Text="{Binding InvalidCharErrorMessage}" FontSize="19"
                            IsVisible="{Binding InvalidCharFound}" Margin="0,0,0,10"/>
 
 				<!-- Error Message for Opening/Closing Brackets not matching up -->
