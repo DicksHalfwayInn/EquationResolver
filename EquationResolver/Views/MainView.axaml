@@ -23,8 +23,6 @@
 	<!-- Main Grid -->
 	<Grid Margin="50,50,50,50">
 
-
-
 		<Grid.ColumnDefinitions>
 			<!-- The ListView of the calculations -->
 			<ColumnDefinition Width="*" />
@@ -87,22 +85,24 @@
 				<TextBlock Text="Error List" Foreground="DarkGray" FontSize="15"
 						   Margin="0,0,0,1" HorizontalAlignment="Center"/>
 				
+				<!-- Underline under the Header -->
 				<Border Background="DarkGray" Height="3" Width="100" 
 						HorizontalAlignment="Center" Margin="0,0,0,10" />
 
 				<!-- Error Message for Invalid Characters in the Textbox -->
 				<TextBlock HorizontalAlignment="Center" Foreground ="Red"
-                           Text="{Binding InvalidCharErrorMessage}" FontSize="15"
-                           IsVisible="{Binding InvalidCharFound}"/>
+                           Text="{Binding InvalidCharErrorMessage}" FontSize="19"
+                           IsVisible="{Binding InvalidCharFound}" Margin="0,0,0,10"/>
 
 				<!-- Error Message for Opening/Closing Brackets not matching up -->
 				<TextBlock HorizontalAlignment="Center" Foreground ="Violet"
                            Text="{Binding MismatchedBracketsErrorMessage}"
                            IsVisible="{Binding MismatchedBracketsFound}"
-						   FontSize="15"/>
+					       Margin="0,0,0,10"
+						   FontSize="17"/>
 
-				<!-- Error Message for Opening/Closing Brackets not matching up -->
-				<TextBlock HorizontalAlignment="Center" Foreground ="DarkGray"
+				<!-- Error Message for trying to divide by zero -->
+				<TextBlock HorizontalAlignment="Center" Foreground ="LightGray"
                            Text="{Binding DivideByZeroErrorMessage}"
                            IsVisible="{Binding DivideByZeroFound}"
 						   FontSize="15"/>
