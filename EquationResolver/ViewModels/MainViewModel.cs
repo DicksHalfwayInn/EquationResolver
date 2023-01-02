@@ -9,7 +9,6 @@ namespace EquationResolver.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
-        public string Greeting => "Welcome to Avalonia!";
 
         #region Private Members
 
@@ -27,7 +26,6 @@ namespace EquationResolver.ViewModels
         ///      The counter for the number of Calculations that have been added to the Calculations Collection
         /// </summary>
         private int calculationCounter = 0;
-  
 
         #endregion EndRegion-Private Members
 
@@ -64,7 +62,7 @@ namespace EquationResolver.ViewModels
             get => invalidCharFound;
             set
             {
-                SetProperty(ref invalidCharFound , value);
+                SetProperty(ref invalidCharFound, value);
             }
         }
         #endregion End Region: Full Property : InvalidCharFound
@@ -84,7 +82,6 @@ namespace EquationResolver.ViewModels
         /// </summary>
         [ObservableProperty] private string divideByZeroErrorMessage = "Can't divide by zero";
 
-
         /// <summary>
         ///      Flag indicating if there are not an equal number of opening and closing brackets
         /// </summary>
@@ -96,8 +93,6 @@ namespace EquationResolver.ViewModels
         /// </summary>
         [ObservableProperty] private string mismatchedBracketsErrorMessage = "Open/Close Brackets Mismatched";
 
-
-
         /// <summary>
         ///      The collection of all the equations performed to create the result in order of operation
         /// </summary>
@@ -108,12 +103,11 @@ namespace EquationResolver.ViewModels
         /// </summary>
         [ObservableProperty] private double result = double.NaN;
 
-
-
         #endregion EndRegion:  Observable Public Properties
 
 
         #region Private helper methods
+
         /// <summary>
         ///      Helper method to check for mismatched brackets
         /// </summary>
@@ -190,7 +184,6 @@ namespace EquationResolver.ViewModels
                     // If the character before the minus is an operator just leave it alone
                     else result = result + "-";
                 }
-
                 // The current byte is not a minus so just add the current character to the result
                 else result = result + trimmedAndDeSpacedOriginalString.Substring(i, 1);
             }
@@ -202,7 +195,7 @@ namespace EquationResolver.ViewModels
         ///      Check to see if any characters are not Numbers, Operators or Brackets 
         /// </summary>
         /// <param name="bytesToCheck"></param>
-        /// <returns></returns>
+        /// <returns>True if all characters in the equation are valid, false otherwise</returns>
         private bool VerifyAllCharsInStringAreValidEquationCharacters(string equationString)
         {
             // Flag for if a Bad Char is found in the passed in string
@@ -210,7 +203,6 @@ namespace EquationResolver.ViewModels
 
             // Remove all the trim and empty spaces from the passed in string
             var trimmedAndDeSpacedstring = equationString.Replace(" ", "");
-
 
             // Convert the refactored string to an Array of Byte
             var bytesToCheck = GetASCIIvalues(trimmedAndDeSpacedstring);
@@ -227,32 +219,27 @@ namespace EquationResolver.ViewModels
                 {
                     // If the character didn't match a legal one... set the fail flag to true
                     foundBadChar = true;
-
                 }
-
-                //// Either the one above or this is correct?
-                //if (!((b < 40) || (b > 57 && b < 94) || (b > 94) || b != 46 || b != 47))
-                //{
-                //    ErrorMessage = "Invalid Characters in Equation";
-                //    errorFound = true;
-
-                //}
-
             }
+            // If we found a bad character in the equation...
             if (foundBadChar)
             {
+                // Set the InvalidCharFound flag to true
                 InvalidCharFound = true;
 
+                // Return False for valid characters in equation
                 return false;
             }
+            // If all the characters in the equation are valid...
             else
             {
+                // Set the InvalidCharFound flag to false
                 InvalidCharFound = false;
+
+                // Return True for valid characters in equation
                 return true;
             }
         }
-
-    
 
         /// <summary>
         ///      Check to see if a passed in character is a valid number character ( 0-9, .  , - )
@@ -282,6 +269,9 @@ namespace EquationResolver.ViewModels
         /// <exception cref="Exception"></exception>
         private string CutOutTextInsideOfBrackets(int openBracketPosition, string stringToCutBracketsOutOf)
         {
+            // If we got passed in empty opening and closing brackets then exit with a result of zero
+            if (stringToCutBracketsOutOf.Length == 0) return "0";
+
             // Declare a property to keep track of the resultant string
             string result = null;
 
@@ -325,7 +315,6 @@ namespace EquationResolver.ViewModels
                 return string.Empty;
             }
         }
-
         #endregion EndRegion: Private helper methods
 
 
@@ -346,6 +335,7 @@ namespace EquationResolver.ViewModels
             // Remove all the spaces from the OriginalString
             trimmedAndDeSpacedOriginalString = OriginalString.Replace(" ", "");
 
+            // Temp property to store the original equation before the minuses are fixed
             var calculationString = trimmedAndDeSpacedOriginalString;
 
             // Fix the minuses in the string
@@ -365,18 +355,20 @@ namespace EquationResolver.ViewModels
             //     then quit the equation resolver attempt
             if (MismatchedBracketsFound) return;
 
+            // Increment the List of Calculations counter
             calculationCounter++;
 
+            // Add the original equation to the list of Calculations
             Calculations.Add(string.Format("{0} :", calculationString));
 
             // Call the EquationStringResolver method
             var equationResult = EquationStringResolver(trimmedAndDeSpacedOriginalString);
 
+            // If we discovered a divide by zero during the equation resolver, set the result to NaN
             if (DivideByZeroFound) Result = double.NaN;
- 
+
             // Change the Equation Result back to a double and update the view with the result of the entire equation
             else Result = Convert.ToDouble(equationResult);
-
         }
         #endregion EndRegion: Command Methods
 
@@ -455,11 +447,11 @@ namespace EquationResolver.ViewModels
                         firstHalfOfString = firstHalfOfString + "*";
 
                     // After the Recursive method has exited... Create a new Resultant sting
-                    resultantString = firstHalfOfString + solution.ToString() + secondHalfOfString;
+                    resultantString = firstHalfOfString + solution + secondHalfOfString;
 
                     // Adjust the counter for the change in the length of the string between
                     //     the passed in string and the new resultant string
-                    i = firstHalfOfString.Length + solution.ToString().Length - 1;
+                    i = firstHalfOfString.Length + solution.Length - 1;
 
                     // Adjust the length property of the while loop to adjust for the new resulant string
                     l = resultantString.Length;
@@ -471,6 +463,7 @@ namespace EquationResolver.ViewModels
             // Solve the equation that occurs in between the brackets or after the brackets have been resolved
             var solvedEquation = SolveSimlifiedEquation(resultantString);
 
+            // If we have found a divide by zero error then exit 
             if (DivideByZeroFound) return string.Empty;
 
             // Return the Solved Equation
@@ -597,7 +590,7 @@ namespace EquationResolver.ViewModels
                             var secondNumberAsDouble = Convert.ToDouble(secondNumberString);
 
                             // If the second number is less than zero and we are doing addition...
-                            if (o == 43) convertedSecondNumberString = (secondNumberAsDouble < 0) ? (secondNumberAsDouble * -1).ToString() : secondNumberString;
+                            if (o == 43) convertedSecondNumberString = (secondNumberAsDouble < 0) ? (secondNumberAsDouble * -1).ToString("#.##") : secondNumberString;
 
                             // If we changed the + - to just a -...
                             if (convertedSecondNumberString != secondNumberString) oper = 45;
@@ -614,14 +607,21 @@ namespace EquationResolver.ViewModels
 
                         // Else Set the solution string to the solution with formatting
                         else solutionString = solution.ToString("#.##");
-                      
+
+                        // Check to see if the solution was zero then override it
+                        if (solutionString == string.Empty) solutionString = "0";
+
                         // Add the equation string to the observable collection of equations
                         Calculations.Add(string.Format("EQ # {4}:    {0}  {1}  {2}  =  {3}",
-                            firstNumberString, (char)oper, convertedSecondNumberString, solutionString, calculationCounter));
+                            firstNumberString, (char)oper, convertedSecondNumberString, solutionString, calculationCounter-1));
 
+                        // If we found a divide by zero error in the calculation...
                         if (DivideByZeroFound)
                         {
+                            // Increment the list of Calculations counter
                             calculationCounter++;
+
+                            // Add the error to the list of Calculations
                             Calculations.Add("     Divide by zero error");
                         }
 
@@ -635,6 +635,9 @@ namespace EquationResolver.ViewModels
 
                         // The double solution as a string
                         solutionString = solution.ToString("#.##");
+
+                        // Check to see if the solution was zero then override it
+                        if (solutionString == string.Empty) solutionString = "0";
 
                         // Change the original string to first half, solution and send half
                         stringrecieved = firstHalfOfString + solutionString + secondHalfOfString;
@@ -668,12 +671,17 @@ namespace EquationResolver.ViewModels
                     // Increment the counter
                     i++;
 
+                    // If we found a divide by zero error break from the while loop
                     if (DivideByZeroFound) break;
                 }
 
+                // If we found a divide by zero error break from the foreach loop
                 if (DivideByZeroFound) break;
             }
+            // If we found a divide by zero error return an empty string
             if (DivideByZeroFound) return "";
+
+            // Else return the result of the calculations
             else return stringrecieved;
         }
 

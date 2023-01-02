@@ -5,12 +5,12 @@
              xmlns:viewModels="clr-namespace:EquationResolver.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="EquationResolver.Views.MainView"
-             
              Background="#171C2C"
-			 Height="450" Width="800">
-  <Design.DataContext>
-    <viewModels:MainViewModel />
-  </Design.DataContext>
+			 MinWidth="800" MinHeight="450">
+	
+	<Design.DataContext>
+		<viewModels:MainViewModel />
+	</Design.DataContext>
 
 	<!--xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
         xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Custom;assembly=Avalonia.Xaml.Interactions"-->
@@ -21,7 +21,7 @@
 	</UserControl.Resources>
 
 	<!-- Main Grid -->
-	<Grid >
+	<Grid Margin="50,50,50,50">
 
 
 
@@ -65,7 +65,7 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
-			
+
 
 			<!-- Equation Entry Textbox-->
 			<StackPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -84,21 +84,28 @@
 
 			<!-- The Error Message (only visible if there are errors TODO:  This doesn't work -->
 			<StackPanel Grid.Row="1" Orientation="Vertical" >
+				<TextBlock Text="Error List" Foreground="DarkGray" FontSize="15"
+						   Margin="0,0,0,1" HorizontalAlignment="Center"/>
+				
+				<Border Background="DarkGray" Height="3" Width="100" 
+						HorizontalAlignment="Center" Margin="0,0,0,10" />
 
 				<!-- Error Message for Invalid Characters in the Textbox -->
-				<TextBlock HorizontalAlignment="Center"
-                           Text="{Binding InvalidCharErrorMessage}"
+				<TextBlock HorizontalAlignment="Center" Foreground ="Red"
+                           Text="{Binding InvalidCharErrorMessage}" FontSize="15"
                            IsVisible="{Binding InvalidCharFound}"/>
 
 				<!-- Error Message for Opening/Closing Brackets not matching up -->
-				<TextBlock HorizontalAlignment="Center"
+				<TextBlock HorizontalAlignment="Center" Foreground ="Violet"
                            Text="{Binding MismatchedBracketsErrorMessage}"
-                           IsVisible="{Binding MismatchedBracketsFound}"/>
-				
+                           IsVisible="{Binding MismatchedBracketsFound}"
+						   FontSize="15"/>
+
 				<!-- Error Message for Opening/Closing Brackets not matching up -->
-				<TextBlock HorizontalAlignment="Center"
+				<TextBlock HorizontalAlignment="Center" Foreground ="DarkGray"
                            Text="{Binding DivideByZeroErrorMessage}"
-                           IsVisible="{Binding DivideByZeroFound}"/>
+                           IsVisible="{Binding DivideByZeroFound}"
+						   FontSize="15"/>
 
 			</StackPanel>
 

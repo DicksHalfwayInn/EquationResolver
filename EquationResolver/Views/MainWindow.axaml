@@ -7,6 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="EquationResolver.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="EquationResolver">
+        Title="EquationResolver"
+		MinWidth="800" MinHeight="450">
         <views:MainView />
 </Window>
