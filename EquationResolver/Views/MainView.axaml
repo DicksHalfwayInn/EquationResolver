@@ -31,7 +31,7 @@
 		</Grid.ColumnDefinitions>
 
 		<!-- Left half of the view showing the Calculations in order of them happening -->
-		<Grid Grid.Column="0">
+		<Grid Grid.Column="0" Margin="0,0,30,0">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="*" />
@@ -66,10 +66,12 @@
 
 
 			<!-- Equation Entry Textbox-->
-			<StackPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+			<StackPanel Grid.Row="0" VerticalAlignment="Center">
 
 				<!-- The Header -->
-				<TextBlock Text="Enter your equation:" FontSize="20" Margin="0,0,0,20"/>
+				<TextBlock Text="Enter your equation:"
+						   HorizontalAlignment="Center"
+						   FontSize="20" Margin="0,0,0,20"/>
 
 				<!-- The Equation Entry Textbox -->
 				<TextBox x:Name="EquationEntry" FontSize="20" Background="Transparent"
@@ -113,10 +115,10 @@
 			<StackPanel Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
 
 				<!-- The Header for the result -->
-				<TextBlock Text="Result :   " FontSize="20"/>
+				<TextBlock Text="Result :   " FontSize="25" />
 
 				<!-- The Calculated Result of the Equation -->
-				<TextBlock Text="{Binding Result}" FontSize="20"/>
+				<TextBlock Text="{Binding Result}" FontSize="25"/>
 
 			</StackPanel>
 
