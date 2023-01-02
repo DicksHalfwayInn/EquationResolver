@@ -77,8 +77,7 @@
                      Text="{Binding OriginalString, Mode=TwoWay}"
                      HorizontalContentAlignment="Center"
                      VerticalContentAlignment="Center"
-                     TextChanged="EquationEntry_TextChanged"
-                     />
+                     TextChanged="EquationEntry_TextChanged" />
 
 			</StackPanel>
 
