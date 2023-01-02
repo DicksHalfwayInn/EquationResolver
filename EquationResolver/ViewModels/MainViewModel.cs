@@ -252,83 +252,7 @@ namespace EquationResolver.ViewModels
             }
         }
 
-        /// <summary>
-        ///      When an operator is found, find the number before the operator
-        /// </summary>
-        /// <param name="stringRecieved">The equation passed in</param>
-        /// <param name="index">The index point of the operator</param>
-        /// <returns></returns>
-        private string FindNumberBeforeOperatorAsString(string stringRecieved, int index)
-        {
-            // The number before the operator
-            var firstHalfOfString = stringRecieved.Substring(0, index);
-
-            // Set a counter equal to the index of the operator
-            var i = index;
-
-            // Iterate backwards through the passed in string
-            foreach (var c in stringRecieved.Substring(0, index).Reverse())
-            {
-                // If a character is not a number then...
-                if (!IsANumber(c))
-                {
-                    // Grab the number before the operand as a string
-                    var numberBeforeOperand = stringRecieved.Substring(i, index - i + 1);
-
-                    // Return the value
-                    return numberBeforeOperand;
-                }
-                // If the character is a number then decrement the counter and look at the character 
-                //      before this one
-                else i--;
-            }
-
-            var result = stringRecieved.Substring(0, i);
-            // TODO:  ONe of these is correct... figure it out
-
-            //var result = stringRecieved.Substring(0, index);
-
-            // Return the number as a string that is before the operand
-            return result;
-
-        }
-
-        /// <summary>
-        ///      When an operator is found, find the number after the operator
-        /// </summary>
-        /// <param name="stringRecieved">The equation passed in</param>
-        /// <param name="index">The index point of the operator</param>
-        /// <returns></returns>
-        private string FindNumberAfterOperatorAsString(string stringRecieved, int index)
-        {
-            // Start off by creating a secondHalfOfString that is the entire rest of the string received
-            var secondHalfOfString = stringRecieved.Substring(index);
-
-            // Set the counter at the point where the operator was found
-            var i = index;
-
-            // Iterate through all the characters that were found after the operator
-            foreach (var c in secondHalfOfString)
-            {
-                // If the character is not a number...
-                if (!IsANumber(c))
-                {
-                    // Grab the number after the operator
-                    var numberAfterTheOperator = stringRecieved.Substring(i, index - i + 1);
-
-                    // Return the Number after the Operator
-                    return numberAfterTheOperator;
-                }
-                // If we haven't found a character that isn't a number... decrement the counter
-                i--;
-            }
-
-            // Set the result for the Second Half of String to the found number
-            var result = secondHalfOfString;
-
-            // Return the result
-            return result;
-        }
+    
 
         /// <summary>
         ///      Check to see if a passed in character is a valid number character ( 0-9, .  , - )
@@ -422,6 +346,8 @@ namespace EquationResolver.ViewModels
             // Remove all the spaces from the OriginalString
             trimmedAndDeSpacedOriginalString = OriginalString.Replace(" ", "");
 
+            var calculationString = trimmedAndDeSpacedOriginalString;
+
             // Fix the minuses in the string
             trimmedAndDeSpacedOriginalString = FixForMinus(trimmedAndDeSpacedOriginalString);
 
@@ -439,11 +365,17 @@ namespace EquationResolver.ViewModels
             //     then quit the equation resolver attempt
             if (MismatchedBracketsFound) return;
 
+            calculationCounter++;
+
+            Calculations.Add(string.Format("{0} :", calculationString));
+
             // Call the EquationStringResolver method
             var equationResult = EquationStringResolver(trimmedAndDeSpacedOriginalString);
 
+            if (DivideByZeroFound) Result = double.NaN;
+ 
             // Change the Equation Result back to a double and update the view with the result of the entire equation
-            Result = Convert.ToDouble(equationResult);
+            else Result = Convert.ToDouble(equationResult);
 
         }
         #endregion EndRegion: Command Methods
@@ -454,18 +386,19 @@ namespace EquationResolver.ViewModels
         /// <summary>
         ///      Called from the View's code-behind for the Equation Entry Textbox's TextChanged event
         ///           Also it resets the previous Result back to NaN-Not a Number
-        ///           TODO:  This is not doing anything right now... it was to show the errors as the 
-        ///                  Text was changing, but the binding doesn't work... fix this
         /// </summary>
         /// <param name="s"></param>
         public void TextboxTextChangedEventMethodInVM(string s)
         {
             // Method that changes the flag to display the error... TODO: doesn't work
-            var hhh = VerifyAllCharsInStringAreValidEquationCharacters(s);
+            var _ = VerifyAllCharsInStringAreValidEquationCharacters(s);
 
             // Check to see if we have the correct number of opening and closing brackets or else
             //      change the error state to visible in the view
             CheckForMismatchedBrackets(s);
+
+            // Reset the Divide by Zero Error Flag
+            DivideByZeroFound = false;
 
             // If the text has changed then we should reset the Result displayed on the view
             Result = double.NaN;
@@ -517,6 +450,10 @@ namespace EquationResolver.ViewModels
                     // Recursively throw the cut out string back into this method to solve further
                     var solution = EquationStringResolver(cutOutTextFromBrackets);
 
+                    // If the user assumes a * before a bracket like 6(3) it will change it to 6 * (3)
+                    if (firstHalfOfString.Length > 0 && IsANumber((int)Convert.ToChar(firstHalfOfString.Substring(firstHalfOfString.Length - 1, 1))))
+                        firstHalfOfString = firstHalfOfString + "*";
+
                     // After the Recursive method has exited... Create a new Resultant sting
                     resultantString = firstHalfOfString + solution.ToString() + secondHalfOfString;
 
@@ -534,8 +471,10 @@ namespace EquationResolver.ViewModels
             // Solve the equation that occurs in between the brackets or after the brackets have been resolved
             var solvedEquation = SolveSimlifiedEquation(resultantString);
 
+            if (DivideByZeroFound) return string.Empty;
+
             // Return the Solved Equation
-            return solvedEquation;
+            else return solvedEquation;
         }
 
         /// <summary>
@@ -630,24 +569,61 @@ namespace EquationResolver.ViewModels
                         // If the operator is Multiplication...
                         if (o == 42) solution = Convert.ToDouble(firstNumberString) * Convert.ToDouble(secondNumberString);
 
-                        // If the operator is Division...
-                        if (o == 47) solution = Convert.ToDouble(firstNumberString) / Convert.ToDouble(secondNumberString);
+                        // If the operator is Division we are trying to divide by zero
+                        if (o == 47 && Convert.ToDouble(secondNumberString) == 0)
+                        {
+                            // Set the DivideByZero flag to true
+                            DivideByZeroFound = true;
+
+                            // This probably does nothing
+                            solution = 0;
+                        }
+                        // If the operator is normal Division...
+                        else if (o == 47) solution = Convert.ToDouble(firstNumberString) / Convert.ToDouble(secondNumberString);
 
                         // If the operator is Addition
                         if (o == 43) solution = Convert.ToDouble(firstNumberString) + Convert.ToDouble(secondNumberString);
 
+                        // Temp property to hold the operator
+                        var oper = o;
+
+                        // Temp property to hold the second number string
+                        string convertedSecondNumberString = secondNumberString;
+
                         // If we are dealing with addition of a second number that is negative... convert the operator to be
                         //      a minus and show it subtracting a positive instead of adding a negative
-                        var oper = o;
-                        var secondNumberAsDouble = Convert.ToDouble(secondNumberString);
-                        var convertedSecondNumberString = (secondNumberAsDouble < 0) ? (secondNumberAsDouble * -1).ToString() : secondNumberString;
-                        if (convertedSecondNumberString != secondNumberString) oper = 45;
+                        {
+                            // Convert the second number string to a double
+                            var secondNumberAsDouble = Convert.ToDouble(secondNumberString);
+
+                            // If the second number is less than zero and we are doing addition...
+                            if (o == 43) convertedSecondNumberString = (secondNumberAsDouble < 0) ? (secondNumberAsDouble * -1).ToString() : secondNumberString;
+
+                            // If we changed the + - to just a -...
+                            if (convertedSecondNumberString != secondNumberString) oper = 45;
+                        }
 
                         // Increment the counter for the number of calculations that have already been added to the listview
                         calculationCounter++;
 
+                        // Temp property to hold the solution string
+                        var solutionString = string.Empty;
+
+                        // If we have a Divide By Zero error, override the solution string
+                        if (DivideByZeroFound) solutionString = "N/A";
+
+                        // Else Set the solution string to the solution with formatting
+                        else solutionString = solution.ToString("#.##");
+                      
                         // Add the equation string to the observable collection of equations
-                        Calculations.Add(string.Format("EQ # {4}:    {0}  {1}  {2}  =  {3}", firstNumberString, (char)oper, convertedSecondNumberString, solution.ToString(), calculationCounter));
+                        Calculations.Add(string.Format("EQ # {4}:    {0}  {1}  {2}  =  {3}",
+                            firstNumberString, (char)oper, convertedSecondNumberString, solutionString, calculationCounter));
+
+                        if (DivideByZeroFound)
+                        {
+                            calculationCounter++;
+                            Calculations.Add("     Divide by zero error");
+                        }
 
                         // Grab the first half of the string before the equation being solved
                         var firstHalfOfString = stringrecieved.Substring(0, firstNumberPosition);
@@ -658,7 +634,7 @@ namespace EquationResolver.ViewModels
                             stringrecieved.Substring(secondintstrFinalPosition + 1, stringrecieved.Length - (secondintstrFinalPosition + 1)) : "";
 
                         // The double solution as a string
-                        var solutionString = solution.ToString("#.##");
+                        solutionString = solution.ToString("#.##");
 
                         // Change the original string to first half, solution and send half
                         stringrecieved = firstHalfOfString + solutionString + secondHalfOfString;
@@ -691,11 +667,94 @@ namespace EquationResolver.ViewModels
 
                     // Increment the counter
                     i++;
+
+                    if (DivideByZeroFound) break;
                 }
+
+                if (DivideByZeroFound) break;
             }
-            return stringrecieved;
+            if (DivideByZeroFound) return "";
+            else return stringrecieved;
         }
 
         #endregion EndRegion:  Private methods to Solve the Equation 
+
+        ///// <summary>
+        /////      When an operator is found, find the number before the operator
+        ///// </summary>
+        ///// <param name="stringRecieved">The equation passed in</param>
+        ///// <param name="index">The index point of the operator</param>
+        ///// <returns></returns>
+        //private string FindNumberBeforeOperatorAsString(string stringRecieved, int index)
+        //{
+        //    // The number before the operator
+        //    var firstHalfOfString = stringRecieved.Substring(0, index);
+
+        //    // Set a counter equal to the index of the operator
+        //    var i = index;
+
+        //    // Iterate backwards through the passed in string
+        //    foreach (var c in stringRecieved.Substring(0, index).Reverse())
+        //    {
+        //        // If a character is not a number then...
+        //        if (!IsANumber(c))
+        //        {
+        //            // Grab the number before the operand as a string
+        //            var numberBeforeOperand = stringRecieved.Substring(i, index - i + 1);
+
+        //            // Return the value
+        //            return numberBeforeOperand;
+        //        }
+        //        // If the character is a number then decrement the counter and look at the character 
+        //        //      before this one
+        //        else i--;
+        //    }
+
+        //    var result = stringRecieved.Substring(0, i);
+        //    // TODO:  ONe of these is correct... figure it out
+
+        //    //var result = stringRecieved.Substring(0, index);
+
+        //    // Return the number as a string that is before the operand
+        //    return result;
+
+        //}
+
+        /// <summary>
+        ///      When an operator is found, find the number after the operator
+        /// </summary>
+        /// <param name="stringRecieved">The equation passed in</param>
+        /// <param name="index">The index point of the operator</param>
+        /// <returns></returns>
+        //private string FindNumberAfterOperatorAsString(string stringRecieved, int index)
+        //{
+        //    // Start off by creating a secondHalfOfString that is the entire rest of the string received
+        //    var secondHalfOfString = stringRecieved.Substring(index);
+
+        //    // Set the counter at the point where the operator was found
+        //    var i = index;
+
+        //    // Iterate through all the characters that were found after the operator
+        //    foreach (var c in secondHalfOfString)
+        //    {
+        //        // If the character is not a number...
+        //        if (!IsANumber(c))
+        //        {
+        //            // Grab the number after the operator
+        //            var numberAfterTheOperator = stringRecieved.Substring(i, index - i + 1);
+
+        //            // Return the Number after the Operator
+        //            return numberAfterTheOperator;
+        //        }
+        //        // If we haven't found a character that isn't a number... decrement the counter
+        //        i--;
+        //    }
+
+        //    // Set the result for the Second Half of String to the found number
+        //    var result = secondHalfOfString;
+
+        //    // Return the result
+        //    return result;
+        //}
     }
 }

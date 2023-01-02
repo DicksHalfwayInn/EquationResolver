@@ -46,8 +46,9 @@
 
 			<!-- The Collection of Equations in Order of Operation -->
 			<ListBox Grid.Row="1" Margin="20,20,20,20"
-                  Items="{Binding Calculations}"
-                  FontSize="15"/>
+					 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     Items="{Binding Calculations}"
+                     FontSize="15"/>
 		</Grid>
 
 
